@@ -1,0 +1,12 @@
+.env
+.env.local
+.env.*.local
+node_modules/
+vendor/
+var/
+.phpunit.cache/
+dist/
+coverage/
+*.log
+backend/config/jwt/*.pem
+!backend/config/jwt/.gitkeep
