@@ -62,6 +62,7 @@ jobs:
       DATABASE_URL: mysql://ketsia_user:ketsia_password@127.0.0.1:3306/ketsia_shop?serverVersion=8.0&charset=utf8mb4
       DEFAULT_URI: http://localhost:8000
       CORS_ALLOW_ORIGIN: '^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
+      STRIPE_SECRET_KEY: sk_test_dummy_key_for_ci
       JWT_PASSPHRASE: change_me_to_a_secure_passphrase
       JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
       JWT_PUBLIC_KEY: "%kernel.project_dir%/config/jwt/public.pem"
@@ -86,6 +87,7 @@ jobs:
           DATABASE_URL=${DATABASE_URL}
           DEFAULT_URI=${DEFAULT_URI}
           CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN}
+          STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
           JWT_PASSPHRASE=${JWT_PASSPHRASE}
           JWT_SECRET_KEY=${JWT_SECRET_KEY}
           JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
