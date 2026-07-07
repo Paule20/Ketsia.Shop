@@ -11,13 +11,17 @@ const SIZES_BY_SLUG = {
 const EMPTY_FORM = { name: '', categoryId: '', subCategory: '', price: '', stock: '', description: '', imageUrl: '' };
 
 export default function AdminProductsPage() {
-  const [products, setProducts]   = useState([]);
+  const [products, setProducts]     = useState([]);
   const [categories, setCategories] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [form, setForm]           = useState(EMPTY_FORM);
-  const [saving, setSaving]       = useState(false);
-  const [toast, setToast]         = useState('');
+  const [showModal, setShowModal]   = useState(false);
+  const [editingId, setEditingId]   = useState(null);
+  const [form, setForm]             = useState(EMPTY_FORM);
+  const [saving, setSaving]         = useState(false);
+  const [toast, setToast]           = useState('');
+
+  // Produit en attente de suppression (affiche la modale de confirmation si non-null)
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting]         = useState(false);
 
   useEffect(() => {
     api.get('/api/products').then((r) => setProducts(r.data)).catch(() => {});
@@ -88,14 +92,28 @@ export default function AdminProductsPage() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Supprimer ce produit ?')) return;
+  // Ouvre la modale de confirmation (remplace window.confirm)
+  function requestDelete(product) {
+    setDeleteTarget(product);
+  }
+
+  function cancelDelete() {
+    if (deleting) return; // évite de fermer pendant une suppression en cours
+    setDeleteTarget(null);
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
     try {
-      await api.delete(`/api/products/${id}`);
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      await api.delete(`/api/products/${deleteTarget.id}`);
+      setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
       notify('Produit supprimé');
+      setDeleteTarget(null);
     } catch {
-      alert('Erreur lors de la suppression.');
+      notify('Erreur lors de la suppression.');
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -167,6 +185,45 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
+      {/* Modal — Confirmation de suppression (remplace window.confirm) */}
+      <div className={`modal-bg ${deleteTarget ? 'show' : ''}`} onClick={(e) => e.target === e.currentTarget && cancelDelete()}>
+        {deleteTarget && (
+          <div className="modal" style={{ maxWidth: 420 }}>
+            <div className="modal-head">
+              <span className="modal-title">Supprimer le produit</span>
+              <button className="modal-close" onClick={cancelDelete} disabled={deleting}>✕</button>
+            </div>
+
+            <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 24 }}>
+              {deleteTarget.imageUrl && (
+                <img className="prod-thumb-sm" src={deleteTarget.imageUrl} alt={deleteTarget.name} style={{ width: 56, height: 68 }} />
+              )}
+              <div style={{ fontSize: 14 }}>
+                Es-tu sûre de vouloir supprimer <strong>{deleteTarget.name}</strong> ?
+                <div style={{ color: 'var(--mid)', fontSize: 12, marginTop: 4 }}>
+                  Cette action est définitive et retirera le produit du catalogue client.
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                type="button"
+                className="btn btn-md btn-full"
+                style={{ background: '#c0392b', color: '#fff' }}
+                onClick={confirmDelete}
+                disabled={deleting}
+              >
+                {deleting ? 'Suppression...' : 'Supprimer définitivement'}
+              </button>
+              <button type="button" className="btn btn-outline btn-md" onClick={cancelDelete} disabled={deleting}>
+                Annuler
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="admin-header">
         <div className="admin-title">Produits</div>
         <button className="btn btn-rose btn-sm" onClick={openAddModal}>+ Ajouter un produit</button>
@@ -201,7 +258,7 @@ export default function AdminProductsPage() {
               <td>
                 <div className="tbl-actions">
                   <button onClick={() => openEditModal(p)}>Modifier</button>
-                  <button className="del" onClick={() => handleDelete(p.id)}>Supprimer</button>
+                  <button className="del" onClick={() => requestDelete(p)}>Supprimer</button>
                 </div>
               </td>
             </tr>
@@ -211,3 +268,4 @@ export default function AdminProductsPage() {
     </>
   );
 }
+

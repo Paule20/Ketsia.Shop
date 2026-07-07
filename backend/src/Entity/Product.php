@@ -55,7 +55,7 @@ class Product
 
     /** URL de l'image du produit (hébergée ailleurs, CDN ou service tiers) */
     #[ORM\Column(length: 500, nullable: true)]
-    #[Assert\Url(message: "L'URL de l'image n'est pas valide.")]
+    #[Assert\Url(message: "L'URL de l'image n'est pas valide.",requireTld: true)]
     private ?string $imageUrl = null;
 
     /** Tailles disponibles pour ce produit (ex: ["XS","S","M","L","XL"] ou ["4A","6A","8A"]) */
