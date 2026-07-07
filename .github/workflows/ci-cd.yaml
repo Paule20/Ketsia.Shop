@@ -32,6 +32,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Run tests (Vitest)
+        run: npm run test
+
   backend:
     name: Backend tests
     runs-on: ubuntu-latest
@@ -63,13 +66,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # nécessaire pour l'analyse SonarCloud plus bas
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
           extensions: ctype, iconv, intl, mbstring, pdo_mysql, zip
-          coverage: none
+          coverage: xdebug  # active la couverture pour SonarCloud
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          APP_ENV=${APP_ENV}
+          APP_SECRET=${APP_SECRET}
+          DATABASE_URL=${DATABASE_URL}
+          JWT_PASSPHRASE=${JWT_PASSPHRASE}
+          JWT_SECRET_KEY=${JWT_SECRET_KEY}
+          JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+          EOF
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -87,16 +103,66 @@ jobs:
         run: |
           php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
-      - name: Run tests
-        run: php bin/phpunit --testdox
+      - name: Run tests with coverage
+        run: php bin/phpunit --testdox --coverage-clover=coverage.xml
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage.xml
+
+  # -----------------------
+  # ANALYSE SONARCLOUD
+  # (le SonarQube local ne peut pas être atteint par les runners GitHub)
+  # -----------------------
+  sonarqube:
+    name: SonarCloud analysis
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download backend coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   docker:
     name: Docker build
     runs-on: ubuntu-latest
-    needs: [frontend, backend]
+    needs: [sonarqube]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Validate full stack build
         run: docker compose -f compose.yaml build
+
+  # -----------------------
+  # DEPLOIEMENT RENDER
+  # Ne se déclenche que sur push main
+  # A activer une fois le compte Render créé (retire le "false &&")
+  # -----------------------
+  deploy:
+    name: Deploy to Render
+    needs: [docker]
+    runs-on: ubuntu-latest
+    if: false && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Déployer le backend sur Render
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
+
+      - name: Déployer le frontend sur Render
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}"
+
