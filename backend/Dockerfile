@@ -51,7 +51,8 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # Droits corrects sur le repertoire var/ (cache, logs)
-RUN chown -R www-data:www-data var/ \
+RUN mkdir -p var/cache var/log \
+    && chown -R www-data:www-data var/ \
     && chmod -R 775 var/
 
 # Expose le port PHP-FPM (9000) — Nginx communique avec ce port
