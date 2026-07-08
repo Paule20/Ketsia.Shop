@@ -158,13 +158,12 @@ jobs:
   # -----------------------
   # DEPLOIEMENT RENDER
   # Ne se déclenche que sur push main
-  # A activer une fois le compte Render créé (retire le "false &&")
   # -----------------------
   deploy:
     name: Deploy to Render
     needs: [docker]
     runs-on: ubuntu-latest
-    if: false && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Déployer le backend sur Render
         run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}"
