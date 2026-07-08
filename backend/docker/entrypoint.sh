@@ -15,4 +15,8 @@ if [ ! -f "$JWT_DIR/private.pem" ] || [ ! -f "$JWT_DIR/public.pem" ]; then
     chown www-data:www-data "$JWT_DIR/private.pem" "$JWT_DIR/public.pem"
 fi
 
+# Applique les migrations Doctrine en attente a chaque demarrage (idempotent :
+# ne rejoue pas les migrations deja executees)
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
 exec supervisord -c /etc/supervisor/supervisord.conf
