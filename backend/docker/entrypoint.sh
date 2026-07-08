@@ -19,4 +19,10 @@ fi
 # ne rejoue pas les migrations deja executees)
 php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
+# La commande ci-dessus tourne en root et peut generer du cache Symfony
+# (var/cache/prod/...) appartenant a root, illisible/inscriptible par
+# www-data (php-fpm) ensuite : on remet les droits avant de demarrer
+chown -R www-data:www-data var/cache var/log
+chmod -R 775 var/cache var/log
+
 exec supervisord -c /etc/supervisor/supervisord.conf
