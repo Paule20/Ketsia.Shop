@@ -2,6 +2,9 @@
 FROM php:8.2-fpm
 
 # Installation des dependances systeme et extensions PHP requises par Symfony + Doctrine
+# nginx + supervisor : servent le HTTP directement dans ce conteneur (requis par Render,
+# qui deploie chaque service comme un conteneur unique sans reverse-proxy devant lui)
+# gettext-base : fournit envsubst pour injecter $PORT dans la config nginx au demarrage
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,6 +15,9 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     zip \
     unzip \
+    nginx \
+    supervisor \
+    gettext-base \
     && docker-php-ext-install \
         pdo \
         pdo_mysql \
@@ -55,7 +61,15 @@ RUN mkdir -p var/cache var/log \
     && chown -R www-data:www-data var/ \
     && chmod -R 775 var/
 
-# Expose le port PHP-FPM (9000) — Nginx communique avec ce port
-EXPOSE 9000
+# Config nginx (template, $PORT injecte au demarrage) + supervisor (pilote nginx + php-fpm)
+RUN mkdir -p /etc/nginx/templates \
+    && rm -f /etc/nginx/sites-enabled/default
+COPY docker/nginx.render.conf.template /etc/nginx/templates/render.conf.template
+COPY docker/supervisord.conf /etc/supervisor/supervisord.conf
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-CMD ["php-fpm"]
+# Render fournit le port a ecouter via la variable $PORT au demarrage
+EXPOSE 10000
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

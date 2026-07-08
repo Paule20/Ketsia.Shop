@@ -1,0 +1,36 @@
+server {
+    listen ${PORT};
+    server_name _;
+
+    # Racine du projet Symfony (dossier public/)
+    root /var/www/backend/public;
+    index index.php;
+
+    # Logs envoyes vers stdout/stderr (visibles dans les logs Render)
+    access_log /dev/stdout;
+    error_log  /dev/stderr;
+
+    # Toutes les requetes sont redirigees vers index.php (front controller Symfony)
+    location / {
+        try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    # Passage des requetes PHP a PHP-FPM (meme conteneur, port 9000)
+    location ~ ^/index\.php(/|$) {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT   $realpath_root;
+
+        fastcgi_read_timeout 300;
+
+        internal;
+    }
+
+    # Bloque l'acces direct aux autres fichiers .php (securite)
+    location ~ \.php$ {
+        return 404;
+    }
+}
