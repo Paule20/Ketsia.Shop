@@ -61,6 +61,11 @@ RUN mkdir -p var/cache var/log \
     && chown -R www-data:www-data var/ \
     && chmod -R 775 var/
 
+    # Symfony exige que le fichier .env existe physiquement pour demarrer,
+# meme si toutes les vraies valeurs viennent des variables d'environnement
+# Render (.env est volontairement absent du depot / de l'image via .dockerignore)
+RUN touch .env
+
 # Config nginx (template, $PORT injecte au demarrage) + supervisor (pilote nginx + php-fpm)
 RUN mkdir -p /etc/nginx/templates \
     && rm -f /etc/nginx/sites-enabled/default
