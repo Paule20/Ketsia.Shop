@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
     gettext-base \
+    openssl \
     && docker-php-ext-install \
         pdo \
         pdo_mysql \
