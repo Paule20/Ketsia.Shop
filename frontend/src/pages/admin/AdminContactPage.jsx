@@ -13,6 +13,15 @@ export default function AdminContactPage() {
     api.get('/api/admin/contact').then((r) => setMessages(r.data)).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (!selected) return;
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') closeModal();
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selected]);
+
   async function handleStatusChange(id, status) {
     setMessages((prev) => prev.map((m) => m.id === id ? { ...m, status } : m));
     setSelected((prev) => prev && prev.id === id ? { ...prev, status } : prev);
@@ -70,7 +79,12 @@ export default function AdminContactPage() {
       </table>
 
       {/* ── Modale de détail message ── */}
-      <div className={`modal-bg ${selected ? 'show' : ''}`} onClick={(e) => e.target === e.currentTarget && closeModal()}>
+      <div
+        className={`modal-bg ${selected ? 'show' : ''}`}
+        onClick={(e) => e.target === e.currentTarget && closeModal()}
+        onKeyDown={(e) => e.key === 'Escape' && closeModal()}
+        role="presentation"
+      >
         {selected && (
           <div className="modal" style={{ maxWidth: 560 }}>
             <div className="modal-head">
