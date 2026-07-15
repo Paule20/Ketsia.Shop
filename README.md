@@ -117,7 +117,6 @@ Procédure détaillée et scripts de déploiement manuel : [`docs/deployment.md`
 
 ## Note de conformité
 
-Ce projet met en œuvre les principales compétences attendues en conception, développement, qualité logicielle et déploiement d'une application web moderne. Les fonctionnalités ont été adaptées au domaine du e-commerce tout en conservant une architecture et des méthodes de développement. 
+Ce projet met en œuvre les principales compétences attendues en conception, développement, qualité logicielle et déploiement d'une application web moderne.
 
-Les livrables de conception (analyse des besoins, modélisation, documentation technique et fonctionnelle) décrivent les processus métier propres à une boutique en ligne, notamment la gestion des produits, des utilisateurs, des commandes, du panier et des paiements. Ce projet met en œuvre les principales compétences attendues en conception, développement, qualité logicielle et déploiement d'une application web moderne, appliquées à un contexte e-commerce réaliste : gestion des produits, des utilisateurs, des commandes, du panier et des paiements.
-
+Les livrables de conception (analyse des besoins, modélisation, documentation technique et fonctionnelle) décrivent les processus métier propres à une boutique en ligne, notamment la gestion des produits, des utilisateurs, des commandes, du panier et des paiements.
