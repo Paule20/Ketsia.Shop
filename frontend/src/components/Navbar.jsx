@@ -57,6 +57,9 @@ export default function Navbar() {
               <Link to="/catalogue?cat=garcon">Garçon</Link>
             </div>
           </div>
+          <div className="nav-item">
+            <Link to="/contact" className="nav-link">Contact</Link>
+          </div>
         </nav>
 
         {/* Actions */}
@@ -140,6 +143,8 @@ export default function Navbar() {
               <Link to="/catalogue?cat=garcon" onClick={closeMobile}>Garçon</Link>
             </div>
           )}
+
+          <Link to="/contact" onClick={closeMobile}>Contact</Link>
 
           <div className="navbar-drawer-sep"></div>
 
