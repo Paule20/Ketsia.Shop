@@ -47,7 +47,7 @@ export default function Footer() {
             <li><a>Livraison</a></li>
             <li><a>Retours &amp; échanges</a></li>
             <li><a>Guide des tailles</a></li>
-            <li><a>Contact</a></li>
+            <li><Link to="/contact">Contact</Link></li>
             <li><a>FAQ</a></li>
           </ul>
         </div>

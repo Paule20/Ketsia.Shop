@@ -18,8 +18,10 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
+import AdminContactPage from './pages/admin/AdminContactPage';
 import DevNav from './components/DevNav';
 import ProfilePage from './pages/ProfilePage';
+import ContactPage from './pages/ContactPage';
 
 function PrivateRoute({ children }) {
   if (import.meta.env.DEV) return children;
@@ -56,6 +58,7 @@ export default function App() {
           <Route path="/login"    element={<PublicLayout><LoginPage /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><RegisterPage /></PublicLayout>} />
           <Route path="/cart"     element={<PublicLayout><CartPage /></PublicLayout>} />
+          <Route path="/contact"  element={<PublicLayout><ContactPage /></PublicLayout>} />
 
           {/* ── Commande & Confirmation (header minimal, sans Navbar ni Footer) ── */}
           <Route path="/commande" element={
@@ -90,6 +93,7 @@ export default function App() {
             <Route path="orders"  element={<AdminOrdersPage />} />
             <Route path="products" element={<AdminProductsPage />} />
             <Route path="users"   element={<AdminUsersPage />} />
+            <Route path="contact" element={<AdminContactPage />} />
           </Route>
 
           {/* Fallback */}

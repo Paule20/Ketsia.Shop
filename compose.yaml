@@ -14,12 +14,16 @@ services:
       JWT_PUBLIC_KEY: /var/www/backend/config/jwt/public.pem
       JWT_PASSPHRASE: ${JWT_PASSPHRASE:-change_me_to_a_secure_passphrase}
       CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$}
+      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME:-ketsia_mongo}:${MONGO_INITDB_ROOT_PASSWORD:-ketsia_mongo_password}@mongo:27017/?authSource=admin
+      MONGODB_DB: ${MONGO_DB_NAME:-ketsia_shop}
     volumes:
       - ./backend:/var/www/backend
       - backend_vendor:/var/www/backend/vendor
     depends_on:
       database:
         condition: service_healthy
+      mongo:
+        condition: service_started
     networks:
       - ketsia_network
     restart: unless-stopped
@@ -75,6 +79,20 @@ services:
       - ketsia_network
     restart: unless-stopped
 
+  mongo:
+    image: mongo:7
+    container_name: ketsia_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-ketsia_mongo}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-ketsia_mongo_password}
+    ports:
+      - "${MONGO_PORT:-27018}:27017"
+    volumes:
+      - ketsia_mongo_data:/data/db
+    networks:
+      - ketsia_network
+    restart: unless-stopped
+
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: ketsia_phpmyadmin
@@ -94,6 +112,7 @@ services:
 volumes:
   backend_vendor:
   ketsia_mysql_data:
+  ketsia_mongo_data:
 
 networks:
   ketsia_network:

@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     libicu-dev \
+    libssl-dev \
     zip \
     unzip \
     nginx \
@@ -31,6 +32,9 @@ RUN apt-get update && apt-get install -y \
         intl \
         opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Extension MongoDB (requise par doctrine/mongodb-odm-bundle, messages de contact)
+RUN pecl install mongodb && docker-php-ext-enable mongodb
 
 # Installation de Composer depuis son image officielle (evite les problemes de version)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

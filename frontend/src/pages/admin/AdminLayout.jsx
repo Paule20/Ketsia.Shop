@@ -31,6 +31,7 @@ export default function AdminLayout() {
         <NavLink to="/admin/products" className={linkClass} onClick={closeMenu}><span>👗</span> Produits</NavLink>
         <NavLink to="/admin/orders" className={linkClass} onClick={closeMenu}><span>📦</span> Commandes</NavLink>
         <NavLink to="/admin/users" className={linkClass} onClick={closeMenu}><span>👥</span> Utilisateurs</NavLink>
+        <NavLink to="/admin/contact" className={linkClass} onClick={closeMenu}><span>✉️</span> Messages</NavLink>
         <Link to="/" className="admin-nav-item" style={{ marginTop: 40 }} onClick={closeMenu}><span>↩</span> Retour au site</Link>
       </aside>
 

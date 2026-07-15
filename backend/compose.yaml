@@ -20,9 +20,13 @@ services:
       JWT_SECRET_KEY: /var/www/backend/config/jwt/private.pem
       JWT_PUBLIC_KEY: /var/www/backend/config/jwt/public.pem
       JWT_PASSPHRASE: ${JWT_PASSPHRASE}
+      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME:-ketsia_mongo}:${MONGO_INITDB_ROOT_PASSWORD:-ketsia_mongo_password}@mongo:27017/?authSource=admin
+      MONGODB_DB: ${MONGO_DB_NAME:-ketsia_shop}
     depends_on:
       database:
         condition: service_healthy
+      mongo:
+        condition: service_started
     networks:
       - ketsia_network
     restart: unless-stopped
@@ -97,9 +101,25 @@ services:
   #   networks:
   #     - ketsia_network
 
+  # --- MongoDB (messages de contact) ---
+  mongo:
+    image: mongo:7
+    container_name: ketsia_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-ketsia_mongo}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-ketsia_mongo_password}
+    ports:
+      - "${MONGO_PORT:-27018}:27017"
+    volumes:
+      - ketsia_mongo_data:/data/db
+    networks:
+      - ketsia_network
+    restart: unless-stopped
+
 volumes:
   ketsia_mysql_data:
     driver: local
+  ketsia_mongo_data:
 
 networks:
   ketsia_network:

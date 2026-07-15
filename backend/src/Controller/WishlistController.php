@@ -99,7 +99,7 @@ class WishlistController extends AbstractController
                 'price'       => $product->getPrice(),
                 'imageUrl'    => $product->getImageUrl(),
                 'subCategory' => $product->getSubCategory(),
-                 'sizes'       => $product->getSizes(),
+                'sizes'       => $product->getSizes(),
                 'category'    => $product->getCategory() ? [
                     'id'   => $product->getCategory()->getId(),
                     'name' => $product->getCategory()->getName(),

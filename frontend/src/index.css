@@ -384,8 +384,10 @@ footer { background: var(--ink); color: rgba(255,255,255,.5); }
 .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: #666; margin-bottom: 7px; }
 .field input { width: 100%; padding: 12px 14px; border: 1px solid var(--stone); border-radius: 3px; font-size: 14px; outline: none; background: var(--sand); transition: border-color .2s, background .2s; }
 .field input:focus { border-color: var(--rose); background: var(--white); }
+.field textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--stone); border-radius: 3px; font-size: 14px; resize: vertical; font-family: inherit; outline: none; background: var(--sand); transition: border-color .2s, background .2s; }
+.field textarea:focus { border-color: var(--rose); background: var(--white); }
 .field-err { color: #c0392b; font-size: 12px; margin-top: 5px; }
-.field.err input { border-color: #c0392b; }
+.field.err input, .field.err textarea { border-color: #c0392b; }
 
 .alert-box { padding: 12px 14px; border-radius: 3px; font-size: 13px; margin-bottom: 18px; }
 .alert-err { background: #fce8e6; color: #c0392b; border: 1px solid #f5b7b1; }

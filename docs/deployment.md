@@ -2,7 +2,7 @@
 
 ## Role de Docker
 
-Docker permet de lancer la meme application sur toutes les machines : frontend React, backend Symfony, base MySQL et serveur Nginx. Le correcteur peut donc tester le projet sans reconstruire manuellement chaque service.
+Docker permet de lancer la meme application sur toutes les machines : frontend React, backend Symfony, base MySQL, base MongoDB et serveur Nginx. Le correcteur peut donc tester le projet sans reconstruire manuellement chaque service.
 
 ## Lancement local
 
@@ -52,8 +52,24 @@ Copier `.env.example` vers `.env`, puis modifier au minimum :
 - `JWT_PASSPHRASE`
 - `DB_PASSWORD`
 - `DB_ROOT_PASSWORD`
+- `MONGODB_URI`
+- `MONGODB_DB`
 - `VITE_API_URL`
 - `CORS_ALLOW_ORIGIN`
+
+## MongoDB (messages de contact)
+
+Les messages du formulaire de contact sont stockes dans MongoDB (demonstration NoSQL), separement de MySQL qui gere le reste du domaine (utilisateurs, produits, commandes).
+
+- En local : service `mongo` du `compose.yaml` racine, accessible sur `localhost:${MONGO_PORT:-27018}`.
+- En production : MongoDB Atlas (offre gratuite M0), car Render ne propose pas de MongoDB manage et chaque service Render est buildé depuis son propre Dockerfile (le `compose.yaml` ne sert qu'en local).
+
+Mise en place cote Atlas :
+
+1. Creer un cluster gratuit (M0) sur https://www.mongodb.com/atlas.
+2. Autoriser l'acces reseau depuis n'importe quelle IP (`0.0.0.0/0`) — acceptable pour un projet de certification sur offre gratuite.
+3. Recuperer la chaine de connexion SRV (`mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net`).
+4. Definir `MONGODB_URI` (chaine de connexion) et `MONGODB_DB` (nom de la base) comme variables d'environnement du service backend sur Render, au meme titre que `DATABASE_URL`.
 
 ## Verification apres deploiement
 

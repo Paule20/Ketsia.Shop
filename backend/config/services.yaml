@@ -25,4 +25,5 @@ services:
     App\Service\StripeService:
         arguments:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
-            $frontendUrl:     '%env(DEFAULT_URI)%'
+            $frontendUrl:     '%env(FRONTEND_URL)%'
+
