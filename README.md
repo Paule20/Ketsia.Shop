@@ -120,3 +120,5 @@ Procédure détaillée et scripts de déploiement manuel : [`docs/deployment.md`
 Ce projet met en œuvre les principales compétences attendues en conception, développement, qualité logicielle et déploiement d'une application web moderne.
 
 Les livrables de conception (analyse des besoins, modélisation, documentation technique et fonctionnelle) décrivent les processus métier propres à une boutique en ligne, notamment la gestion des produits, des utilisateurs, des commandes, du panier et des paiements.
+
+
